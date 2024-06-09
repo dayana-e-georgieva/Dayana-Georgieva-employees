@@ -1,0 +1,136 @@
+﻿@page
+@model CommonProjectsAmongEmpoyees.Pages.IndexModel
+@{
+	ViewData["Title"] = "Upload CSV";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Upload CSV</title>
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="~/CommonProjectsAmongEmpoyees.styles.css" asp-append-version="true" />
+	<style>
+		.container {
+			padding: 20px;
+			text-align: center;
+		}
+
+		#employeesDiv {
+			display: inline-table;
+			padding: 30px;
+			text-align: center;
+		}
+		
+		#employeeTable {
+			display: inline-table;
+			padding: 30px;
+			text-align: center;
+		}
+
+		#fileUpload {
+			padding: 10px;
+		}
+
+		table th {
+			padding: 10px;
+		}
+
+		table td {
+			text-align: center;
+			padding: 10px;
+		}
+
+	</style>
+</head>
+
+<body>
+	<h2>Upload CSV</h2>
+
+	<form method="post" enctype="multipart/form-data">
+		<div id="fileUpload">
+			<label for="file">Choose CSV file to upload:</label>
+			<input type="file" id="file" name="UploadedFile" />
+		</div>
+		<button type="submit">Upload</button>
+	</form>
+
+	<script>
+		function showMessage(message) {
+			let modalHtml = `
+					<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="messageModalLabel">Warning</h5>
+											<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									${message}
+								</div>
+								<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								</div>
+							</div>
+						</div>
+					</div>`;
+
+			$("body").append(modalHtml);
+			$("#messageModal").modal('show');
+			$("#messageModal").on('hidden.bs.modal', function () {
+				$(this).remove();
+			});
+		}
+
+		$(document).ready(function () {
+		@if (ViewData["Message"] != null)
+		{
+			<text>
+					showMessage("@ViewData["Message"]");
+			</text>
+		}
+			});
+	</script>
+
+	@if (Model.EmployeesInformation != null && Model.EmployeesInformation.Count > 0)
+	{
+		<div id="employeesDiv">
+			<h3>Employees who worked together on the same project (@Model.EmployeesInformation.Count)</h3>
+			<table id="employeeTable" class="display">
+				<thead>
+					<tr>
+						<th>Employee ID #1</th>
+						<th>Employee ID #2</th>
+						<th>Project ID</th>
+						<th>Days Worked</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var employee in Model.EmployeesInformation)
+					{
+						<tr>
+							<td>@employee.EmployeeID1</td>
+							<td>@employee.EmployeeID2</td>
+							<td>@employee.ProjectID</td>
+							<td>@employee.DaysWorked</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+		<script>
+			$(document).ready(function () {
+				$('#employeeTable').DataTable();
+			});
+		</script>
+	}
+</body>
+</html>
